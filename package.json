@@ -5,13 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "npx @hexlet/chat-server ./frontend/build",
-   "dev": "npx @hexlet/chat-server ./frontend/build",
+    "dev": "npx @hexlet/chat-server ./frontend/build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.4"
+    "@hexlet/chat-server": "^2.0.4",
+    "formik": "^2.4.9",
+    "react-router-dom": "^7.9.6",
+    "yup": "^1.7.1"
   }
 }
