@@ -1,0 +1,17 @@
+{
+  "name": "fullstack-javascript-project-139",
+  "version": "1.0.0",
+  "description": "[![Actions Status](https://github.com/RSuarezwilli/fullstack-javascript-project-139/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/RSuarezwilli/fullstack-javascript-project-139/actions)",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx @hexlet/chat-server ./frontend/build",
+   "dev": "npx @hexlet/chat-server ./frontend/build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hexlet/chat-server": "^2.0.4"
+  }
+}
