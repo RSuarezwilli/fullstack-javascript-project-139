@@ -4,32 +4,37 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// --- 🔥 AGREGAR SOCKET.IO CLIENTE ---
+// Redux
+import { Provider } from 'react-redux';
+import store from './store';
+
+// Socket.IO
 import { io } from "socket.io-client";
 
-// Conexión al backend (ajusta el puerto si tu servidor usa otro)
+// Conexión al backend
 export const socket = io("http://localhost:5000", {
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
 });
 
-// Eventos básicos
+// Logs de conexión
 socket.on("connect", () => {
   console.log("Cliente conectado:", socket.id);
 });
 
+// Logs de mensajes recibidos
 socket.on("message", (msg) => {
   console.log("Mensaje recibido:", msg);
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Provider store={store}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Provider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
