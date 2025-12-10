@@ -4,6 +4,24 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// --- 🔥 AGREGAR SOCKET.IO CLIENTE ---
+import { io } from "socket.io-client";
+
+// Conexión al backend (ajusta el puerto si tu servidor usa otro)
+export const socket = io("http://localhost:5000", {
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
+
+// Eventos básicos
+socket.on("connect", () => {
+  console.log("Cliente conectado:", socket.id);
+});
+
+socket.on("message", (msg) => {
+  console.log("Mensaje recibido:", msg);
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
