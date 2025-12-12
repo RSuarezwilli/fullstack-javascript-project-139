@@ -3,9 +3,12 @@
 const API_PATH = '/api/v1';
 
 export default {
-  // Ruta para el inicio de sesión
+  // LOGIN
   loginPath: () => [API_PATH, 'login'].join('/'),
-  
-  // RUTA NUEVA: Ruta para obtener los datos iniciales del chat (canales, mensajes, etc.)
-  dataPath: () => [API_PATH, 'data'].join('/'), 
+
+  // SIGNUP (REGISTRO) 🔥 NUEVO
+  signupPath: () => [API_PATH, 'signup'].join('/'),
+
+  // DATA DEL CHAT (canales + mensajes)
+  dataPath: () => [API_PATH, 'data'].join('/'),
 };

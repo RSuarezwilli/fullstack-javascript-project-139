@@ -1,36 +1,26 @@
-// src/App.js
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "../components/Header";
+import Login from "./Login";
+import Signup from "./Signup";
+import Home from "./Home";
+import NotFound from "./NotFound";
+import { AuthProvider } from "../components/AuthContext";
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import NotFound from './pages/NotFound';
-
-// 1. IMPORTAR COMPONENTES DE AUTORIZACIÓN
-import { AuthProvider } from './contexts/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
-
-function App() {
+const App = () => {
   return (
-    // 2. ENVOLVER LA APLICACIÓN CON EL PROVEEDOR DE AUTORIZACIÓN
     <AuthProvider>
-      <Router>
+      <BrowserRouter>
+        <Header />
         <Routes>
-          {/* Ruta de Login (no protegida) */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-
-          {/* Ruta Protegida: Reemplazamos <Home /> por la lógica de protección */}
-          {/* Si el usuario está logueado, PrivateRoute renderiza su contenido */}
-          <Route path="/" element={<PrivateRoute />}>
-            {/* 3. Definimos la página Home (Chat) como el componente a proteger */}
-            <Route index element={<Home />} /> 
-          </Route>
-          
-          {/* Ruta para cualquier otra URL no definida */}
+          <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
+      </BrowserRouter>
     </AuthProvider>
   );
-}
+};
 
 export default App;
