@@ -9,12 +9,35 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: {
-        translation: en,
+     resources: {
+  en: {
+    translation: {
+      errors: {
+        dataLoad: "Error loading chat data",
+        channelCreate: "Channel could not be created",
       },
-      es: {
-        translation: es,
+      success: {
+        channelCreated: "Channel created successfully",
+        channelRenamed: "Channel renamed successfully",
+        channelDeleted: "Channel deleted successfully",
+      }
+    }
+  },
+  es: {
+    translation: {
+      errors: {
+        dataLoad: "Error al cargar los datos del chat",
+        channelCreate: "No se pudo crear el canal",
       },
+      success: {
+        channelCreated: "Canal creado correctamente",
+        channelRenamed: "Canal renombrado correctamente",
+        channelDeleted: "Canal eliminado correctamente",
+      }
+    }
+  }
+}
+
     },
     lng: 'en',           // 👈 IDIOMA PREDETERMINADO (IMPORTANTE)
     fallbackLng: 'en',   // 👈 Para pruebas automatizadas

@@ -7,11 +7,19 @@ import Home from "./Home";
 import NotFound from "./NotFound";
 import { AuthProvider } from "../components/AuthContext";
 
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const App = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Header />
+
+        
+        <ToastContainer position="top-right" autoClose={3000} />
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

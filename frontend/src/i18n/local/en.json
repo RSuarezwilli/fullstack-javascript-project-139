@@ -1,0 +1,16 @@
+{
+  "loading": "Loading chat...",
+  "errors": {
+    "loadData": "Error loading chat data."
+  },
+  "channels": {
+    "title": "Channels",
+    "created": "Channel created successfully",
+    "removed": "Channel removed",
+    "renamed": "Channel renamed"
+  },
+  "messages": {
+    "title": "Messages area",
+    "placeholder": "Messages for the active channel will appear here."
+  }
+}
