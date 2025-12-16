@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider as RollbarProvider, ErrorBoundary } from "@rollbar/react";
+import rollbar from "./rollbar"; 
 
 // Redux
 import { Provider } from 'react-redux';
@@ -30,11 +32,15 @@ socket.on("message", (msg) => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>
+  <RollbarProvider instance={rollbar}>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </Provider>
+    </ErrorBoundary>
+  </RollbarProvider>
 );
 
 reportWebVitals();
