@@ -1,3 +1,6 @@
+setup:
+	npm ci
+
 install:
 	npm ci
 
