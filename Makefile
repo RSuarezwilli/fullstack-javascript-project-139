@@ -1,11 +1,18 @@
-setup:
-	npm ci
+lint-frontend:
+    make -C frontend lint
 
 install:
-	npm ci
+    npm ci
+    cd frontend && npm ci
+
+start-backend:
+    npx start-server -s ./frontend/dist -p 5001
+
+start-frontend:
+    make -C frontend start-frontend
+
+start:
+    make -C frontend start-frontend
 
 build:
-	npm run build || echo "No build step required"
-
-test:
-	npm test || echo "Tests handled by Hexlet"
+    make -C frontend build
