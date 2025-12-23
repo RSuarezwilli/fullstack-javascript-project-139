@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchInitialData } from '../../slice/thunks';
 import { messageReceived } from '../../slice/messagesSlice';
+// Importamos las acciones de canales para los sockets
+import { addChannel, removeChannel, renameChannel } from '../../slice/channelsSlice';
 import socket from '../../socket';
 import ChannelsBox from '../../components/Channels/ChannelsBox';
 import MessagesBox from '../../components/Messages/MessagesBox';
@@ -16,13 +18,34 @@ const ChatPage = () => {
       dispatch(fetchInitialData({ Authorization: `Bearer ${token}` }));
     }
 
-    // Oidores (listeners) de Socket
+    // --- Listeners de Socket (Fase 4) ---
+    
+    // Mensajes nuevos
     socket.on('newMessage', (payload) => {
       dispatch(messageReceived(payload));
     });
 
+    // Canales nuevos
+    socket.on('newChannel', (payload) => {
+      dispatch(addChannel(payload));
+    });
+
+    // Eliminar canales
+    socket.on('removeChannel', (payload) => {
+      dispatch(removeChannel(payload.id)); // El socket suele enviar { id: N }
+    });
+
+    // Renombrar canales
+    socket.on('renameChannel', (payload) => {
+      dispatch(renameChannel(payload));
+    });
+
+    // Cleanup: Muy importante para evitar el error de "Eventos duplicados"
     return () => {
       socket.off('newMessage');
+      socket.off('newChannel');
+      socket.off('removeChannel');
+      socket.off('renameChannel');
     };
   }, [dispatch, token]);
 
