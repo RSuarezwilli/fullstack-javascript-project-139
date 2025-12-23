@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import socket from "../socket";
+import socket from "../../socket";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import {
   hasProfanity,
   cleanProfanity
-} from "../utils/profanityFilters";
+} from "../../utils/profanityFilters";
 
 const MessageForm = ({ channelId }) => {
   const [text, setText] = useState("");
