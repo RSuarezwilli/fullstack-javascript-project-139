@@ -1,23 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { fetchInitialData } from './thunks.js';
+
+const initialState = {
+  items: [],
+};
 
 const messagesSlice = createSlice({
   name: 'messages',
-  initialState: { items: [], loading: false, error: null },
+  initialState,
   reducers: {
-    // Carga inicial (Fase 2)
-    initialMessagesLoaded: (state, action) => {
-      state.items = action.payload;
-    },
-    // Nuevo mensaje individual (Fase 2: "messageReceived")
-    messageReceived: (state, action) => {
-      state.items.push(action.payload);
-    },
+    messageReceived: (oldState, action) => ({
+      ...oldState,
+      items: [...oldState.items, action.payload],
+    }),
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchInitialData.fulfilled, (oldState, action) => ({
+      ...oldState,
+      items: action.payload.messages,
+    }));
   },
 });
 
-export const { initialMessagesLoaded, messageReceived } = messagesSlice.actions;
+export const { messageReceived } = messagesSlice.actions;
 export default messagesSlice.reducer;
-
-
-
-
