@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // Importaciones ajustadas a tu estructura de carpetas real
-import ChatPage from './pages/ChatPage/ChatPage'; // Antes era Home
-import LoginPage from './pages/LoginPage/LoginPage'; // Antes era Login
-import SignupPage from './pages/SignupPage/SignupPage'; // Antes era Signup
+import ChatPage from './components/ChatPage/ChatPage'; // Antes era Home
+import LoginPage from './componets/LoginPage/LoginPage'; // Antes era Login
+import SignupPage from './components/SignupPage/SignupPage'; // Antes era Signup
 import PrivateRoute from './components/PrivateRoute'; // Verifica que esté en la raíz de components
 import { AuthProvider, useAuth } from './context/AuthProvider'; // Ajustado a tu carpeta 'context'
 
