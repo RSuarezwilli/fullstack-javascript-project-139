@@ -1,112 +1,112 @@
 import React, { useState } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext';
-import routes from '../routes';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-const Signup = () => {
-  const [serverError, setServerError] = useState(null);
+import { signup } from '../../chatApi/api.js';
+import { useAuth } from '../../contexts/AuthProvider.jsx';
+
+const SignupPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const auth = useAuth();
+  const { logIn } = useAuth();
 
-  const initialValues = {
-    username: '',
-    password: '',
-    confirmPassword: '',
-  };
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [errors, setErrors] = useState([]);
 
-  const validationSchema = Yup.object({
-    username: Yup.string()
-      .min(3, 'Debe tener al menos 3 caracteres')
-      .max(20, 'Debe tener máximo 20 caracteres')
-      .required('El nombre de usuario es obligatorio'),
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newErrors = [];
 
-    password: Yup.string()
-      .min(6, 'Debe tener al menos 6 caracteres')
-      .required('La contraseña es obligatoria'),
+    if (username.length < 3 || username.length > 20) {
+      newErrors.push(t('regRules.name'));
+    }
+    if (password.length < 6) {
+      newErrors.push(t('regRules.password'));
+    }
+    if (password !== confirm) {
+      newErrors.push(t('regRules.passwordEquality'));
+    }
 
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Las contraseñas no coinciden')
-      .required('Debes confirmar la contraseña'),
-  });
-
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setServerError(null);
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     try {
-      const { username, password } = values;
-
-      // 👉 Llamada al backend para registrar usuario
-      const response = await axios.post(routes.signupPath(), { username, password });
-
-      // 👉 Iniciar sesión automáticamente después de registrarse
-      auth.logIn(username, password);
-
-      // 👉 Redirigir al chat
-      navigate('/', { replace: true });
-
-    } catch (error) {
-      if (error.response?.status === 409) {
-        setServerError('Este nombre de usuario ya está en uso.');
+      const { token, username: returnedUser } = await signup(username, password);
+      logIn(token, returnedUser);
+      navigate('/');
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setErrors([t('errors.userExist')]);
       } else {
-        setServerError('Error al registrar. Intenta nuevamente.');
+        setErrors([t('error')]);
       }
-      console.error(error);
-    } finally {
-      setSubmitting(false);
     }
   };
 
   return (
     <div>
-      <h1>Registro</h1>
+      <h2>{t('registration')}</h2>
 
-      {serverError && (
-        <div style={{ color: 'white', backgroundColor: '#dc3545', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>
-          {serverError}
+      {errors.length > 0 && (
+        <div style={{ color: 'red' }}>
+          {errors.map((err, i) => (
+            <div key={`${i + 1}`}>{err}</div>
+          ))}
         </div>
       )}
 
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-
-            <div>
-              <label>Nombre de usuario:</label>
-              <Field type="text" name="username" disabled={isSubmitting} />
-              <ErrorMessage name="username" component="div" style={{ color: 'red' }} />
-            </div>
-
-            <div>
-              <label>Contraseña:</label>
-              <Field type="password" name="password" disabled={isSubmitting} />
-              <ErrorMessage name="password" component="div" style={{ color: 'red' }} />
-            </div>
-
-            <div>
-              <label>Confirmar contraseña:</label>
-              <Field type="password" name="confirmPassword" disabled={isSubmitting} />
-              <ErrorMessage name="confirmPassword" component="div" style={{ color: 'red' }} />
-            </div>
-
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Registrando...' : 'Registrarse'}
-            </button>
-          </Form>
-        )}
-      </Formik>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="usernameInput">
+            {t('placeholders.username')}
+          </label>
+          <input
+            id="usernameInput"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="passwordInput">
+            {t('placeholders.password')}
+          </label>
+          <input
+            id="passwordInput"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="confirmPasswordInput">
+            {t('placeholders.confirmPassword')}
+          </label>
+          <input
+            id="confirmPasswordInput"
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+        </div>
+        <button type="submit">
+          {t('makeRegistration')}
+        </button>
+      </form>
 
       <p>
-        ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+        {t('alreadyHaveAccount')}
+        {' '}
+        <Link to="/login">
+          {t('entry')}
+        </Link>
       </p>
     </div>
   );
 };
 
-export default Signup;
+export default SignupPage;

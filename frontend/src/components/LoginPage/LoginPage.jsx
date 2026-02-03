@@ -1,49 +1,43 @@
+// frontend/src/components/LoginPage/LoginPage.jsx
 import React, { useState } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import {
+  Formik, Form, Field, ErrorMessage,
+} from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
+import { login as loginRequest } from '../../chatApi/api.js';
+import { useAuth } from '../../contexts/AuthProvider.jsx';
 
-import { useAuth } from '../components/AuthContext';
-
-const Login = () => {
-  const [loginError, setLoginError] = useState(null);
-
-  const auth = useAuth();
+const LoginPage = () => {
+  const { t } = useTranslation();
+  const [authError, setAuthError] = useState(null);
+  const { logIn } = useAuth();
   const navigate = useNavigate();
 
-  const initialValues = {
-    username: 'admin',
-    password: 'admin',
-  };
-
-  const validationSchema = Yup.object({
-    username: Yup.string().required('El nombre de usuario es obligatorio'),
-    password: Yup.string().required('La contraseña es obligatoria'),
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().required(t('errors.required')),
+    password: Yup.string().required(t('errors.required')),
   });
 
+  const initialValues = {
+    username: '',
+    password: '',
+  };
+
   const handleSubmit = async (values, { setSubmitting }) => {
-    setLoginError(null);
-
     try {
-      const success = await auth.logIn(values.username, values.password);
+      setAuthError(null);
+      const {
+        token,
+        username: returnedUser,
+      } = await loginRequest(values.username, values.password);
 
-      if (success) {
-        navigate('/', { replace: true });
-      }
-
+      logIn(token, returnedUser);
+      navigate('/');
     } catch (error) {
-      if (error.response?.status === 401) {
-        setLoginError('Nombre de usuario o contraseña incorrectos.');
-      } else if (axios.isAxiosError(error) && !error.response) {
-        setLoginError('Error de red. Asegúrate de que el servidor esté funcionando.');
-      } else {
-        setLoginError('Ocurrió un error desconocido durante el inicio de sesión.');
-      }
-
-      console.error('Error de login:', error);
-
+      setAuthError(t('errors.invalidFeedback'));
     } finally {
       setSubmitting(false);
     }
@@ -51,13 +45,9 @@ const Login = () => {
 
   return (
     <div>
-      <h1>Iniciar Sesión</h1>
+      <h2>{t('entry')}</h2>
 
-      {loginError && (
-        <div style={{ color: 'white', backgroundColor: '#dc3545', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>
-          {loginError}
-        </div>
-      )}
+      {authError && <div style={{ color: 'red' }}>{authError}</div>}
 
       <Formik
         initialValues={initialValues}
@@ -67,29 +57,34 @@ const Login = () => {
         {({ isSubmitting }) => (
           <Form>
             <div>
-              <label>Nombre de usuario:</label>
-              <Field type="text" name="username" disabled={isSubmitting} />
-              <ErrorMessage name="username" component="div" style={{ color: 'red' }} />
+              {/* 👇 Aseguramos que el texto sea visible para Playwright */}
+              <label htmlFor="username">{t('placeholders.login')}</label>
+              <Field id="username" name="username" type="text" />
+              <ErrorMessage name="username" component="div" />
             </div>
 
             <div>
-              <label>Contraseña:</label>
-              <Field type="password" name="password" disabled={isSubmitting} />
-              <ErrorMessage name="password" component="div" style={{ color: 'red' }} />
+              <label htmlFor="password">{t('placeholders.password')}</label>
+              <Field id="password" name="password" type="password" />
+              <ErrorMessage name="password" component="div" />
             </div>
 
             <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Cargando...' : 'Iniciar sesión'}
+              {isSubmitting ? t('loading') : t('entry')}
             </button>
           </Form>
         )}
       </Formik>
 
       <p>
-        ¿No tienes cuenta? <a href="/signup">Regístrate aquí</a>
+        {t('noAccount')}
+        {' '}
+        <Link to="/signup">
+          {t('makeRegistration')}
+        </Link>
       </p>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;

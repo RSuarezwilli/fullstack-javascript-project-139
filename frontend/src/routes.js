@@ -1,14 +1,36 @@
-// src/routes.js (ARCHIVO NUEVO)
+// frontend/src/routes.js
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-const API_PATH = '/api/v1';
+import ChatPage from './components/ChatPage/ChatPage.jsx';
+import LoginPage from './components/LoginPage/LoginPage.jsx';
+import SignupPage from './components/SignupPage/SignupPage.jsx';
+import NotFoundPage from './components/Errors/NotFoundPage.jsx';
 
-export default {
-  // LOGIN
-  loginPath: () => [API_PATH, 'login'].join('/'),
+const apiPath = 'api/v1';
 
-  // SIGNUP (REGISTRO) 🔥 NUEVO
-  signupPath: () => [API_PATH, 'signup'].join('/'),
-
-  // DATA DEL CHAT (canales + mensajes)
-  dataPath: () => [API_PATH, 'data'].join('/'),
+export const appPaths = {
+  signUp: '/signup',
+  login: '/login',
+  chat: '/',
+  notFound: '*',
 };
+
+export const apiRoutes = {
+  signup: () => [apiPath, 'signup'].join('/'),
+  login: () => [apiPath, 'login'].join('/'),
+  channels: () => [apiPath, 'channels'].join('/'),
+  messages: () => [apiPath, 'messages'].join('/'),
+};
+
+// Componente principal de rutas
+const AppRoutes = () => (
+  <Routes>
+    <Route path={appPaths.chat} element={<ChatPage />} />
+    <Route path={appPaths.login} element={<LoginPage />} />
+    <Route path={appPaths.signUp} element={<SignupPage />} />
+    <Route path={appPaths.notFound} element={<NotFoundPage />} />
+  </Routes>
+);
+
+export default AppRoutes;
