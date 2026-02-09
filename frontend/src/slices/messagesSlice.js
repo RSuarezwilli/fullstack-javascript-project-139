@@ -1,3 +1,4 @@
+// frontend/src/slices/messagesSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchInitialData } from './thunks.js';
 
