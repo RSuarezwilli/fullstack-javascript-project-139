@@ -15,7 +15,7 @@ const MessageForm = () => {
     socket.emit('newMessage', {
       body: text,
       channelId: currentChannelId,
-      username: username,
+      username,
     });
     setText(''); // Limpiamos el campo
   };

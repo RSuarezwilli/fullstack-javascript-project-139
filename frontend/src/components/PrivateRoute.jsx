@@ -13,7 +13,7 @@ const PrivateRoute = () => {
   if (auth.loggedIn) {
     return <Outlet />;
   }
-  
+
   // Si no está logueado (no hay token), redirige a la página /login
   // El estado replace: true asegura que el / se reemplace por /login en el historial
   return <Navigate to="/login" replace />;

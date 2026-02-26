@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import socket from "../../socket";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
+import socket from '../../socket';
 
 // 🔥 FILTRO
 import {
   hasProfanity,
-  cleanProfanity
-} from "../../utils/profanityFilters";
+  cleanProfanity,
+} from '../../utils/profanityFilters';
 
 const MessageForm = ({ channelId }) => {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const { t } = useTranslation();
 
   const handleSubmit = (e) => {
@@ -20,16 +20,16 @@ const MessageForm = ({ channelId }) => {
 
     // 🔥 PUNTO 2 VA AQUÍ
     if (hasProfanity(text)) {
-      toast.error(t("errors.profanity"));
+      toast.error(t('errors.profanity'));
       return;
     }
 
-    socket.emit("newMessage", {
+    socket.emit('newMessage', {
       body: cleanProfanity(text),
       channelId,
     });
 
-    setText("");
+    setText('');
   };
 
   return (
@@ -38,7 +38,7 @@ const MessageForm = ({ channelId }) => {
         className="form-control"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder={t("messages.placeholder")}
+        placeholder={t('messages.placeholder')}
       />
       <button className="btn btn-primary mt-2" type="submit">
         Enviar
