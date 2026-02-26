@@ -1,9 +1,6 @@
-import axios from "axios" 
-const getToken = () => {
+import axios from 'axios';
 
-    return localStorage.getItem("token") ?? null
-}
-
+const getToken = () => localStorage.getItem('token') ?? null;
 
 const api = axios.create({
   baseURL: '/api/v1',
