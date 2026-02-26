@@ -1,43 +1,75 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import socket from '../../../socket';
+// frontend/src/components/ChatPage/Modals/Add.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify'; // 1) Importar toast
+import { useTranslation } from 'react-i18next';
+import { addChannel } from '../../../slices/thunks.js';
+import { closeModal } from '../../../slices/modalSlice.js';
 
-const Add = ({ onHide }) => {
-  const [name, setName] = useState('');
-  // El enunciado pide manejar estados de carga o errores si es necesario
-  const channels = useSelector((state) => state.channels.items);
+const Add = () => {
+  const dispatch = useDispatch();
+  const [channelName, setChannelName] = useState('');
+  const inputRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const { items: channels } = useSelector((state) => state.channels);
+  const { isOpen, type } = useSelector((state) => state.modal);
+
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (type === 'addChannel' && isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [type, isOpen]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Emitimos el evento 'newChannel' según la Fase 4 del enunciado
-    socket.emit('newChannel', { name }, (response) => {
-      if (response.status === 'ok') {
-        onHide(); // Cerramos el modal tras el éxito
-      }
-    });
+    if (!channelName.trim()) return;
+
+    const alreadyExists = channels.some((ch) => ch.name === channelName.trim());
+    if (alreadyExists) {
+      // En lugar de alert, podrías usar un toast de error
+      toast.error(t('modal.unique')); // "Must be unique"
+      return;
+    }
+    try {
+      await dispatch(addChannel({ name: channelName.trim() })).unwrap();
+      // 2) Si se crea con éxito, toast de éxito
+      toast.success(t('success.newChannel')); // "Channel created"
+      dispatch(closeModal());
+    } catch (err) {
+      // 3) Si falla, toast de error
+      toast.error(t('errors.channelAdd')); // "Error adding channel"
+      console.error(t('errors.channelAdd'), err);
+    }
   };
 
+  const handleCancel = () => {
+    dispatch(closeModal());
+  };
+
+  if (type !== 'addChannel' || !isOpen) {
+    return null;
+  }
+
   return (
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title">Añadir canal</h5>
-        <button type="button" className="btn-close" onClick={onHide}></button>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="modal-body">
+    <div className="modal-backdrop">
+      <div className="modal">
+        <h2>{t('modal.add')}</h2>
+        <form onSubmit={handleSubmit}>
+          <label className="visually-hidden" htmlFor="name">{t('modal.channelName')}</label>
           <input
-            className="form-control mb-2"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            autoFocus
+            ref={inputRef}
+            type="text"
+            value={channelName}
+            onChange={(e) => setChannelName(e.target.value)}
+            placeholder={t('modal.channelName')}
+            name="name"
           />
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onHide}>Cancelar</button>
-          <button type="submit" className="btn btn-primary">Enviar</button>
-        </div>
-      </form>
+          <button type="submit">{t('send')}</button>
+          <button type="button" onClick={handleCancel}>{t('cancel')}</button>
+        </form>
+      </div>
     </div>
   );
 };
