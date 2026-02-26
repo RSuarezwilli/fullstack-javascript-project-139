@@ -41,6 +41,7 @@ api.interceptors.response.use(
 );
 
 export const login = async (username, password) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const response = await api.post('/login', { username, password });
     const { token, username: returnedUser } = response.data || {};
@@ -60,6 +61,7 @@ export const signup = async (username, password) => {
 };
 
 export const getChannels = async () => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const response = await api.get('/channels');
     return response.data;
@@ -69,6 +71,7 @@ export const getChannels = async () => {
 };
 
 export const getMessages = async () => {
+  // eslint-disable-next-line no-useless-catch
   try {
     const response = await api.get('/messages');
     return response.data;

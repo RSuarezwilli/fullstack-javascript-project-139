@@ -14,79 +14,79 @@ import Rename from './Modals/Rename.jsx';
 import ChatNavbar from '../Navbar/ChatNavbar.jsx';
 
 const ChatPage = () => {
-    const { isAuthenticated } = useAuth();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const socket = useSocket();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const socket = useSocket();
 
-    // Verificación de autenticación
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login');
-        } else {
-            dispatch(fetchInitialData());
-        }
-    }, [isAuthenticated, navigate, dispatch]);
+  // Verificación de autenticación
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    } else {
+      dispatch(fetchInitialData());
+    }
+  }, [isAuthenticated, navigate, dispatch]);
 
-    // Manejo de socket
-    useEffect(() => {
-        if (!socket) {
-            // Retorna algo (aunque sea 'undefined') para evitar inconsistencia
-            return undefined;
-        }
+  // Manejo de socket
+  useEffect(() => {
+    if (!socket) {
+      // Retorna algo (aunque sea 'undefined') para evitar inconsistencia
+      return undefined;
+    }
 
-        const handleNewMessage = (payload) => {
-            dispatch(messageReceived(payload));
-        };
+    const handleNewMessage = (payload) => {
+      dispatch(messageReceived(payload));
+    };
 
-        const handleNewChannel = (payload) => {
-            console.log('Recibido evento newChannel:', payload);
-        };
-        const handleRemoveChannel = (payload) => {
-            console.log('Recibido evento removeChannel:', payload);
-        };
-        const handleRenameChannel = (payload) => {
-            console.log('Recibido evento renameChannel:', payload);
-        };
+    const handleNewChannel = (payload) => {
+      console.log('Recibido evento newChannel:', payload);
+    };
+    const handleRemoveChannel = (payload) => {
+      console.log('Recibido evento removeChannel:', payload);
+    };
+    const handleRenameChannel = (payload) => {
+      console.log('Recibido evento renameChannel:', payload);
+    };
 
-        socket.on('newMessage', handleNewMessage);
-        socket.on('newChannel', handleNewChannel);
-        socket.on('removeChannel', handleRemoveChannel);
-        socket.on('renameChannel', handleRenameChannel);
+    socket.on('newMessage', handleNewMessage);
+    socket.on('newChannel', handleNewChannel);
+    socket.on('removeChannel', handleRemoveChannel);
+    socket.on('renameChannel', handleRenameChannel);
 
-        // Retornamos la limpieza
-        return () => {
-            socket.off('newMessage', handleNewMessage);
-            socket.off('newChannel', handleNewChannel);
-            socket.off('removeChannel', handleRemoveChannel);
-            socket.off('renameChannel', handleRenameChannel);
-        };
-    }, [socket, dispatch]);
+    // Retornamos la limpieza
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+      socket.off('newChannel', handleNewChannel);
+      socket.off('removeChannel', handleRemoveChannel);
+      socket.off('renameChannel', handleRenameChannel);
+    };
+  }, [socket, dispatch]);
 
-    return (
-        <>
-            <ChatNavbar />
-            <div style={{ display: 'flex', height: '100vh' }}>
-                <div
-                    style={{
-                        width: '250px',
-                        borderRight: '1px solid #ccc',
-                        padding: '1rem',
-                        overflowY: 'auto',
-                    }}
-                >
-                    <ChannelsBox />
-                </div>
-                <div style={{ flex: 1, padding: '1rem', overflowY: 'auto' }}>
-                    <MessagesBox />
-                    <MessageForm />
-                </div>
-                <Add />
-                <Remove />
-                <Rename />
-            </div>
-        </>
-    );
+  return (
+    <>
+      <ChatNavbar />
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <div
+          style={{
+            width: '250px',
+            borderRight: '1px solid #ccc',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+        >
+          <ChannelsBox />
+        </div>
+        <div style={{ flex: 1, padding: '1rem', overflowY: 'auto' }}>
+          <MessagesBox />
+          <MessageForm />
+        </div>
+        <Add />
+        <Remove />
+        <Rename />
+      </div>
+    </>
+  );
 };
 
 export default ChatPage;
